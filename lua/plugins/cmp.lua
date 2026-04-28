@@ -19,7 +19,19 @@ return {
       cmp.setup({
         snippet = {
           expand = function(args)
-            luasnip.lsp_expand(args.body)
+            local body = args.body
+            -- Collapse params inside () into a single cursor tabstop
+            body = body:gsub("%b()", function(s)
+              if s:match("%$") then
+                return "(__CUR__)"
+              end
+              return s
+            end)
+            -- Strip remaining placeholders
+            body = body:gsub("%${%d+:?[^}]*}", ""):gsub("%$%d+", "")
+            -- Restore the cursor tabstop inside ()
+            body = body:gsub("__CUR__", "$1")
+            luasnip.lsp_expand(body)
           end,
         },
         mapping = cmp.mapping.preset.insert({
