@@ -52,10 +52,15 @@ vim.o.cursorline = false -- highlight the current line
 vim.o.showmode = false
 
 -- Auto-save when exiting Insert mode
-vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter", "InsertLeave" }, {
-  callback = function()
-    vim.diagnostic.show()
-  end,
+vim.api.nvim_create_autocmd("InsertLeave", {
+    pattern = "*",
+    callback = function()
+        -- Only save if the buffer is modifiable and not readonly
+        if vim.bo.modifiable and not vim.bo.readonly then
+            vim.cmd("silent! write")
+        end
+    end,
+    desc = "Auto-save on InsertLeave",
 })
 
 -- send updates faster
