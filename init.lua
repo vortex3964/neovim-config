@@ -42,4 +42,6 @@ require("lazy").setup({
     require("plugins.lsp_signature"),
     require("plugins.database"),
     require("plugins.special"),
+    require("plugins.csv"),
+    require("plugins.pdf"),
 })

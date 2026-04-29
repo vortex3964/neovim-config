@@ -12,7 +12,7 @@ return {
       { "<leader>s",  group = "Search" },
       { "<leader>g",  group = "Git" },
       { "<leader>gv", group = "Diffview" },
-      { "<leader>l",  group = "LSP" },
+      { "<leader>l",  group = "LSP , liveserver" },
       { "<leader>d",  group = "Debug" },
       { "<leader>b",  group = "Buffers" },
       { "<leader>m",  group = "Markdown" },
@@ -21,8 +21,9 @@ return {
       { "<leader>n",  group = "NPM packages" },
       { "<leader>gs", group = "Go struct tags" },
       { "<leader>gt", group = "Go tests" },
-      { "<leader>p",  group = "Python" },
+      { "<leader>p",  group = "Python , Pdf" },
       { "<leader>r", group = "Rest HTTP" },
+      { "<leader>c", group = "csv"},
     })
 
     vim.keymap.set(
