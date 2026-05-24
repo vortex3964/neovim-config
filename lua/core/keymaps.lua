@@ -45,7 +45,7 @@ vim.keymap.set(
 vim.keymap.set("n", "<leader>ct", ":bd!<CR>", { noremap = true, silent = true, desc = "Close terminal buffer" })
 
 --format
-vim.keymap.set("n","<leader>f",vim.lsp.buf.format , {desc = "format file using your lsp"})
+vim.keymap.set("n","<leader>f", function() require("conform").format() end , {desc = "format file"})
 
 --clear highlights
 vim.keymap.set("n", "<Esc>", ":nohlsearch<CR><Esc>", { noremap = true, silent = true, desc = "Clear search highlight" })

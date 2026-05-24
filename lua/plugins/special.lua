@@ -35,7 +35,7 @@ return {
   -- =====================
   {
     "linux-cultist/venv-selector.nvim",
-    branch = "regexp",
+    -- removed: branch = "regexp" (plugin switched back to main)
     ft = { "python" },
     dependencies = {
       "nvim-telescope/telescope.nvim",
@@ -61,7 +61,8 @@ return {
   -- =====================
   {
     "vuki656/package-info.nvim",
-    ft = { "json" },
+    -- scoped to package.json only instead of all json files
+    event = "BufEnter package.json",
     dependencies = { "MunifTanjim/nui.nvim" },
     config = function()
       require("package-info").setup({
@@ -70,29 +71,30 @@ return {
           outdated   = "#fc514e",
         },
         icons = {
-          enable       = true,
-          style        = {
+          enable = true,
+          style  = {
             up_to_date = "  ",
             outdated   = "  ",
           },
         },
-        autostart         = true,
-        hide_up_to_date   = true,  -- only shows outdated packages
+        autostart              = true,
+        hide_up_to_date        = true, -- only shows outdated packages
         hide_unstable_versions = true,
       })
 
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "json",
+      -- scoped to package.json only
+      vim.api.nvim_create_autocmd("BufEnter", {
+        pattern = "package.json",
         callback = function()
           local map = function(keys, func, desc)
             vim.keymap.set("n", keys, func, { buffer = true, silent = true, desc = desc })
           end
-          map("<leader>ns",  require("package-info").show,            "Show package versions")
-          map("<leader>nh",  require("package-info").hide,            "Hide package versions")
-          map("<leader>nu",  require("package-info").update,          "Update package")
-          map("<leader>nd",  require("package-info").delete,          "Delete package")
-          map("<leader>ni",  require("package-info").install,         "Install new package")
-          map("<leader>nv",  require("package-info").change_version,  "Change package version")
+          map("<leader>ns", require("package-info").show,           "Show package versions")
+          map("<leader>nh", require("package-info").hide,           "Hide package versions")
+          map("<leader>nu", require("package-info").update,         "Update package")
+          map("<leader>nd", require("package-info").delete,         "Delete package")
+          map("<leader>ni", require("package-info").install,        "Install new package")
+          map("<leader>nv", require("package-info").change_version, "Change package version")
         end,
       })
     end,
@@ -113,8 +115,9 @@ return {
       { "<leader>xq", "<cmd>Trouble qflist toggle<CR>",                             desc = "Quickfix list" },
     },
     config = function()
+      -- fixed: was `icons` (v2 API, silently ignored) → `signs` (v3 API)
       require("trouble").setup({
-        icons = {
+        signs = {
           error       = " ",
           warning     = " ",
           hint        = "󰌵 ",
