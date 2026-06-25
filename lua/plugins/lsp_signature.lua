@@ -1,7 +1,7 @@
 -- function signature and parameters
 return {
 	"ray-x/lsp_signature.nvim",
-	event = "InsertEnter",
+	event = "LspAttach",
 	config = function()
 		require("lsp_signature").setup({
 			bind = true,
