@@ -103,29 +103,4 @@ return {
 		end,
 	},
 
-	-- Rest: HTTP client inside nvim
-	{
-		"rest-nvim/rest.nvim",
-		ft = { "http" },
-		keys = {
-			{ "<leader>rr", "<cmd>Rest run<CR>", desc = "Run HTTP request" },
-			{ "<leader>rl", "<cmd>Rest last<CR>", desc = "Re-run last request" },
-		},
-		config = function()
-			require("rest-nvim").setup()
-		end,
-	},
-
-	-- Color highlighter: shows colors inline in CSS, hex, rgb, etc.
-	{
-		"brenoprata10/nvim-highlight-colors",
-		event = "BufReadPre",
-		config = function()
-			require("nvim-highlight-colors").setup({
-				render = "background", -- or "foreground" or "virtual"
-				enable_tailwind = true, -- if you use tailwind
-			})
-		end,
-	},
 }
-
