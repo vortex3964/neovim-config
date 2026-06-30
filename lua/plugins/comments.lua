@@ -8,19 +8,18 @@ return {
 				FIX = {
 					icon = "!",
 					color = "error",
-					alt = { "FIXME", "BUG", "IMPORTANT", "ISSUE" },
+					alt = { "FIXME", "BUG", "ISSUE" },
 				},
 				TODO = { icon = " ", color = "info" },
-				HACK = { icon = " ", color = "warning" },
 				WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
-				PERF = { icon = " ", alt = { "OPTIM", "PERFORMANCE", "OPTIMIZE" } },
-				NOTE = { icon = " ", color = "hint", alt = { "INFO" } },
-				TEST = { icon = "⏲ ", color = "test", alt = { "TESTING", "PASSED", "FAILED" } },
+				NOTE = { icon = " ", color = "hint", alt = { } },
 				IMPORTANT = {
 					icon = "! ",
 					color = "error",
 					alt = { "IMP" },
 				},
+                DESC = { icon = " ", color = "#20d91a" , alt = { DESCRIPTION , INFO}, },
+                CHANGE = { icon = " " , color = "#d46b15" , alt = {DEPRECATED} }
 			},
 		})
 
