@@ -63,5 +63,6 @@ vim.api.nvim_create_autocmd("InsertLeave", {
     desc = "Auto-save on InsertLeave",
 })
 
--- send updates faster
-vim.opt.updatetime = 250
+-- for autocomplete
+vim.opt.completeopt = { "menu", "menuone", "noinsert" }
+

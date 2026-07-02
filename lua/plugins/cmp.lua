@@ -17,6 +17,7 @@ return {
 			require("luasnip.loaders.from_vscode").lazy_load()
 
 			cmp.setup({
+                preselect = cmp.PreselectMode.Item,
 				snippet = {
 					expand = function(args)
 						local body = args.body
