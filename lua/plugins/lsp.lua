@@ -7,7 +7,6 @@ return {
 			})
 		end,
 	},
-
 	{
 		"mason-org/mason-lspconfig.nvim",
 		dependencies = {
@@ -15,14 +14,11 @@ return {
 			"neovim/nvim-lspconfig",
 		},
 		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-			capabilities.textDocument.completion.completionItem.snippetSupport = false
-
+			local capabilities = require("blink.cmp").get_lsp_capabilities()
 			-- Apply capabilities to ALL servers, before mason-lspconfig enables them
 			vim.lsp.config("*", {
 				capabilities = capabilities,
 			})
-
 			-- on_attach equivalent via LspAttach autocmd
 			vim.api.nvim_create_autocmd("LspAttach", {
 				callback = function(args)
@@ -43,12 +39,10 @@ return {
 					map("<leader>ld", vim.diagnostic.open_float, "Show diagnostic")
 				end,
 			})
-
 			require("mason-lspconfig").setup({
 				ensure_installed = { "ts_ls", "gopls", "rust_analyzer", "clangd", "marksman", "pyright" },
 				automatic_enable = true,
 			})
-
 			vim.diagnostic.config({
 				virtual_text = {
 					spacing = 4,

@@ -63,6 +63,3 @@ vim.api.nvim_create_autocmd("InsertLeave", {
     desc = "Auto-save on InsertLeave",
 })
 
--- for autocomplete
-vim.opt.completeopt = { "menu", "menuone", "noinsert" }
-
