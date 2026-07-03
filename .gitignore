@@ -1,0 +1,16 @@
+# Editor
+.vscode/
+.idea/
+
+# Neovim runtime/session state
+.netrwhist
+Session.vim
+Sessionx.vim
+*.session
+
+# Local overrides you don't want to accidentally commit
+lua/**/local.lua
+.env
+
+# Lazy.nvim plugin installs
+lazy-lock.json.bak
