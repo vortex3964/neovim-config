@@ -40,9 +40,21 @@ return {
 				end,
 			})
 			require("mason-lspconfig").setup({
-				ensure_installed = { "ts_ls", "gopls", "rust_analyzer", "clangd", "marksman", "pyright" },
+
+                ensure_installed = {
+                  "ts_ls", "html", "cssls", "tailwindcss", "emmet_ls", "jsonls", "eslint",
+                  "gopls",
+                  "pyright",
+                  "clangd", "cmake",
+                  "sqlls",
+                  "bashls", "yamlls",
+                  "dockerls", "docker_compose_language_service",
+                  "marksman",
+                },
+
 				automatic_enable = true,
 			})
+
 			vim.diagnostic.config({
 				virtual_text = {
 					spacing = 4,
