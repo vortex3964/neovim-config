@@ -30,20 +30,6 @@ vim.keymap.set("n", "<leader>y", [["+Y]], opts)
 -- leader d delete wont remember as yanked/clipboard when delete pasting
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
-----Open terminal in horizontal split
-vim.keymap.set("n", "<leader>ot", ":split | terminal<CR>", { noremap = true, silent = true, desc = "Open terminal" })
-
--- Close terminal buffer in terminal mode
-vim.keymap.set(
-	"t",
-	"<leader>ct",
-	"<C-\\><C-n>:bd!<CR>",
-	{ noremap = true, silent = true, desc = "Close terminal buffer" }
-)
-
--- (Optional) Close terminal buffer in normal mode
-vim.keymap.set("n", "<leader>ct", ":bd!<CR>", { noremap = true, silent = true, desc = "Close terminal buffer" })
-
 --format
 vim.keymap.set("n","<leader>f", function() require("conform").format() end , {desc = "format file"})
 

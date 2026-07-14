@@ -44,4 +44,5 @@ require("lazy").setup({
 	require("plugins.special"),
 	require("plugins.csv"),
 	require("plugins.pdf"),
+    require("core.terminal"),
 })
