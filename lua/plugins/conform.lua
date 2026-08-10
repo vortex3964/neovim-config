@@ -14,7 +14,7 @@ return {
 				c = { "clang_format" },
 				cpp = { "clang_format" },
 				lua = { "stylua" },
-				python = { "black" },
+				python = { "ruff_format" },
 			},
 		})
 	end,

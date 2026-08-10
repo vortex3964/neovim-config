@@ -26,6 +26,7 @@ vim.o.conceallevel = 0       -- so that `` is visible in markdown files
 vim.o.fileencoding = "utf-8" -- the encoding written to a file
 
 --search
+vim.opt.timeoutlen = 300
 vim.opt.incsearch = true
 vim.opt.inccommand = "split"
 vim.opt.ignorecase = true

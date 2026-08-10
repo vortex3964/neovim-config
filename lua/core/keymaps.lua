@@ -36,14 +36,6 @@ vim.keymap.set("n","<leader>f", function() require("conform").format() end , {de
 --clear highlights
 vim.keymap.set("n", "<Esc>", ":nohlsearch<CR><Esc>", { noremap = true, silent = true, desc = "Clear search highlight" })
 
---quick rename
-vim.keymap.set(
-	"n",
-	"<leader>s",
-	[[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><Left>]],
-	{ desc = "Replace word cursor is on globally (a quick rename)" }
-)
-
 -- Hightlight yanking when pressing y for example
 vim.api.nvim_create_autocmd("TextYankPost", {
 	desc = "Highlight when yanking (copying) text",

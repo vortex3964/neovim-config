@@ -4,6 +4,9 @@
 require("core.keymaps")
 require("core.options")
 
+-- make mason-installed binaries (prettier, ruff, stylua, ...) findable
+vim.env.PATH = vim.fn.stdpath("data") .. "/mason/bin:" .. vim.env.PATH
+
 -- bootstrap lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
