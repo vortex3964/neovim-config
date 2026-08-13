@@ -42,10 +42,18 @@ require("lazy").setup({
 	require("plugins.conform"),
 	require("plugins.dap"),
 	require("plugins.cmp"),
-	require("plugins.lsp_signature"),
+	require("plugins.rest"),
+	require("plugins.persistence"),
 	require("plugins.database"),
 	require("plugins.special"),
 	require("plugins.csv"),
 	require("plugins.pdf"),
-    require("core.terminal"),
+	require("core.terminal"),
+}, {
+	-- rest.nvim ships a rockspec whose luarocks build fails (missing
+	-- treesitter-parser backend) and pollutes the plugin tree, so disable
+	-- the rockspec package source and only use plain git clones.
+	pkg = {
+		sources = { "lazy", "packspec" },
+	},
 })

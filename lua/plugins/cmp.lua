@@ -45,7 +45,10 @@ return {
 			sources = {
 				default = { "lsp", "path", "snippets", "buffer" },
 			},
-			signature = { enabled = true },
+			signature = {
+				enabled = true,
+				window = { border = "rounded" },
+			},
 		},
 		config = function(_, opts)
 			-- Manually color blink.cmp to match ayu-dark, since the colorscheme

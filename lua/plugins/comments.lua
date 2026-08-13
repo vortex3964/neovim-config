@@ -18,8 +18,8 @@ return {
 					color = "error",
 					alt = { "IMP" },
 				},
-                DESC = { icon = " ", color = "#20d91a" , alt = { DESCRIPTION , INFO}, },
-                CHANGE = { icon = " " , color = "#d46b15" , alt = {DEPRECATED} }
+                DESC = { icon = " ", color = "#20d91a", alt = { "DESCRIPTION", "INFO" } },
+                CHANGE = { icon = " ", color = "#d46b15", alt = { "DEPRECATED" } }
 			},
 		})
 

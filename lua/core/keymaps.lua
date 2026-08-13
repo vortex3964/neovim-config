@@ -7,8 +7,8 @@ vim.keymap.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "moves lines down in visua
 vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "moves lines up in visual selection" })
 
 -- the same but for forward and backwards
-vim.keymap.set("v", "<", "<gv", opts , { desc = "moves lines back in visual selection" })
-vim.keymap.set("v", ">", ">gv", opts , { desc = "moves lines forward in visual selection" })
+vim.keymap.set("v", "<", "<gv", { noremap = true, silent = true, desc = "moves lines back in visual selection" })
+vim.keymap.set("v", ">", ">gv", { noremap = true, silent = true, desc = "moves lines forward in visual selection" })
 
 -- cntrl d and u moves you up and down the buffer
 vim.keymap.set("n", "<C-d>", "<C-d>zz", { desc = "move down in buffer with cursor centered" })
@@ -64,8 +64,6 @@ vim.keymap.set("n", "<leader>sx", "<cmd>close<CR>", { desc = "Close current spli
 
 --delete without copying
 local keymap = vim.keymap.set
-local opts = { noremap = true, silent = true }
-
 
 -- utility binds to stop default behavior
 keymap("n", "x", '"_x', opts)

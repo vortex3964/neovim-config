@@ -22,6 +22,7 @@ return {
 			{ "<leader>gs", group = "Go struct tags" },
 			{ "<leader>gt", group = "Go tests" },
 			{ "<leader>p", group = "Python , Pdf" },
+			{ "<leader>q", group = "Sessions" },
 			{ "<leader>r", group = "Rest HTTP" },
 			{ "<leader>c", group = "csv" },
 		})
