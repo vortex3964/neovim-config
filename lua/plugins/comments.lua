@@ -6,20 +6,21 @@ return {
 		require("todo-comments").setup({
 			keywords = {
 				FIX = {
-					icon = "!",
+					icon = "",
 					color = "error",
 					alt = { "FIXME", "BUG", "ISSUE" },
 				},
-				TODO = { icon = " ", color = "info" },
-				WARN = { icon = " ", color = "warning", alt = { "WARNING", "XXX" } },
-				NOTE = { icon = " ", color = "hint", alt = { } },
+				TODO = { icon = "", color = "info" },
+				WARN = { icon = "", color = "warning", alt = { "WARNING", "XXX" } },
+				NOTE = { icon = "󰎞", color = "hint", alt = { } },
 				IMPORTANT = {
-					icon = "! ",
+					icon = "",
 					color = "error",
 					alt = { "IMP" },
 				},
-                DESC = { icon = " ", color = "#20d91a", alt = { "DESCRIPTION", "INFO" } },
-                CHANGE = { icon = " ", color = "#d46b15", alt = { "DEPRECATED" } }
+                DESC = { icon = "", color = "#20d91a", alt = { "DESCRIPTION", "INFO" } },
+                CHANGE = { icon = "", color = "#d46b15", alt = { "DEPRECATED" } },
+                DOC = { icon= "" , color = "#7e19e3" , alt={"DOC" , "Doc","doc code","Doc code","Doc end","doc end"} }
 			},
 		})
 
