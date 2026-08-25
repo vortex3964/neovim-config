@@ -30,8 +30,7 @@ vim.keymap.set("n", "<leader>y", [["+Y]], opts)
 -- leader d delete wont remember as yanked/clipboard when delete pasting
 vim.keymap.set({ "n", "v" }, "<leader>d", [["_d]])
 
---format
-vim.keymap.set("n","<leader>f", function() require("conform").format() end , {desc = "format file"})
+--format (moved to leader cf to avoid conflict with telescope find)
 
 --clear highlights
 vim.keymap.set("n", "<Esc>", ":nohlsearch<CR><Esc>", { noremap = true, silent = true, desc = "Clear search highlight" })

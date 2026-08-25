@@ -32,13 +32,13 @@ return {
 
 		pcall(telescope.load_extension, "fzf")
 
-		-- Keymaps
-		vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "Find files" })
-		vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "Search word in project" })
-		vim.keymap.set("n", "<leader>sb", builtin.buffers, { desc = "Find open buffers" })
-		vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "Search word under cursor" })
-		vim.keymap.set("n", "<leader>sr", builtin.oldfiles, { desc = "Recent files" })
-		vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "Search diagnostics" })
+		-- Keymaps (using <leader>f to avoid conflict with <leader>s split commands)
+		vim.keymap.set("n", "<leader>ff", builtin.find_files, { desc = "Find files" })
+		vim.keymap.set("n", "<leader>fg", builtin.live_grep, { desc = "Live grep in project" })
+		vim.keymap.set("n", "<leader>fb", builtin.buffers, { desc = "Find open buffers" })
+		vim.keymap.set("n", "<leader>fw", builtin.grep_string, { desc = "Grep word under cursor" })
+		vim.keymap.set("n", "<leader>fr", builtin.oldfiles, { desc = "Recent files" })
+		vim.keymap.set("n", "<leader>fd", builtin.diagnostics, { desc = "Search diagnostics" })
 		vim.keymap.set("n", "<leader>/", builtin.current_buffer_fuzzy_find, { desc = "Fuzzy search in current file" })
 	end,
 }

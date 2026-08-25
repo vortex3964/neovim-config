@@ -15,6 +15,17 @@ return {
 			},
 			snippets = {
 				preset = "luasnip",
+				-- Custom expand: strip function arguments from LSP snippets
+				-- so that foo(int x, int y) becomes foo() with cursor between parens
+				expand = function(snippet)
+					-- Match: functionName(anything here)possibly-more-stuff
+					-- (.-) is non-greedy: stops at the FIRST closing paren
+					local fn_name, args, rest = snippet:match("^(%w+)%((.-)%)(.*)$")
+					if fn_name and args then
+						snippet = fn_name .. "($1)" .. rest
+					end
+					vim.snippet.expand(snippet)
+				end,
 			},
 			keymap = {
 				preset = "none",
@@ -39,11 +50,38 @@ return {
 					window = { border = "rounded" },
 				},
 				accept = {
-					auto_brackets = { enabled = true },
+					-- Disabled: custom snippets.expand already adds () for function completions
+					auto_brackets = { enabled = false },
 				},
 			},
 			sources = {
 				default = { "lsp", "path", "snippets", "buffer" },
+				providers = {
+					lsp = {
+						transform_items = (function()
+							local seen = {}
+							local last_cursor = nil
+							return function(ctx, items)
+								-- Reset seen when cursor moves (new completion session)
+								local cursor = vim.api.nvim_win_get_cursor(0)
+								local cursor_key = cursor[1] .. ":" .. cursor[2]
+								if cursor_key ~= last_cursor then
+									seen = {}
+									last_cursor = cursor_key
+								end
+								return vim.iter(items)
+									:filter(function(item)
+										if item.label and seen[item.label] then
+											return false
+										end
+										seen[item.label] = true
+										return true
+									end)
+									:totable()
+							end
+						end)(),
+					},
+				},
 			},
 			signature = {
 				enabled = true,

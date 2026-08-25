@@ -9,11 +9,11 @@ return {
 		})
 
 		wk.add({
-			{ "<leader>s", group = "Search" },
+			{ "<leader>f", group = "Find (Telescope)" },
 			{ "<leader>g", group = "Git" },
 			{ "<leader>gv", group = "Diffview" },
-			{ "<leader>l", group = "LSP , liveserver" },
-			{ "<leader>d", group = "Debug" },
+			{ "<leader>l", group = "LSP / Live server" },
+			{ "<leader>d", group = "Debug / Delete" },
 			{ "<leader>b", group = "Buffers" },
 			{ "<leader>m", group = "Markdown" },
 			{ "<leader>z", group = "Database" },
@@ -21,10 +21,11 @@ return {
 			{ "<leader>n", group = "NPM packages" },
 			{ "<leader>gs", group = "Go struct tags" },
 			{ "<leader>gt", group = "Go tests" },
-			{ "<leader>p", group = "Python , Pdf" },
+			{ "<leader>p", group = "Python / PDF" },
 			{ "<leader>q", group = "Sessions" },
 			{ "<leader>r", group = "Rest HTTP" },
-			{ "<leader>c", group = "csv" },
+			{ "<leader>c", group = "Code / CSV" },
+			{ "<leader>s", group = "Splits" },
 		})
 
 		vim.keymap.set("n", "<leader>?", function()

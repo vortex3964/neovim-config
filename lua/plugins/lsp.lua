@@ -20,19 +20,26 @@ return {
 				capabilities = capabilities,
 			})
 
-			-- basedpyright: drop-in pyright replacement with better hover docs.
-			-- Tuned for speed + fewer false positives:
-			--   - diagnosticMode "openFilesOnly": no full-project scan at startup
-			--   - typeCheckingMode "basic": no pedantic type errors
-			--   - autoSearchPaths disabled + indexing off: faster startup
-			vim.lsp.config("basedpyright", {
+			-- pyright: optimized for data science / AI / backend Python work
+			--   - useLibraryCodeForTypes: analyze library code for better completions
+			--     (critical for numpy, pandas, torch, etc.)
+			--   - autoSearchPaths: find all project files for accurate completions
+			--   - diagnosticMode "openFilesOnly": don't scan entire workspace at startup
+			--   - typeCheckingMode "standard": catches real type issues without noise
+			vim.lsp.config("pyright", {
 				settings = {
-					basedpyright = {
+					python = {
 						analysis = {
-							typeCheckingMode = "basic",
+							typeCheckingMode = "standard",
+							autoSearchPaths = true,
+							useLibraryCodeForTypes = true,
 							diagnosticMode = "openFilesOnly",
-							autoSearchPaths = false,
-							indexing = false,
+							inlayHints = {
+								variableTypes = true,
+								functionReturnTypes = true,
+								parameterTypes = true,
+								genericTypes = true,
+							},
 						},
 					},
 				},
@@ -66,18 +73,19 @@ return {
 					end, "Hover docs")
 					map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
 					map("<leader>ca", vim.lsp.buf.code_action, "Code action")
-					map("<leader>lf", vim.lsp.buf.format, "Format file")
+					map("<leader>lf", vim.lsp.buf.format, "Format via LSP")
 					map("[d", vim.diagnostic.goto_prev, "Prev diagnostic")
 					map("]d", vim.diagnostic.goto_next, "Next diagnostic")
 					map("<leader>ld", vim.diagnostic.open_float, "Show diagnostic")
+
 				end,
 			})
 
 			require("mason-lspconfig").setup({
 				ensure_installed = {
-					"ts_ls", "html", "cssls", "tailwindcss", "emmet_ls", "jsonls", "eslint",
+					"html", "cssls", "tailwindcss", "emmet_ls", "jsonls", "eslint",
 					"gopls",
-					"basedpyright",
+					"pyright",
 					"lua_ls",
 					"rust_analyzer",
 					"clangd", "cmake",
@@ -100,6 +108,37 @@ return {
 				severity_sort = true,
 				float = { border = "rounded" },
 			})
+		end,
+	},
+	-- TypeScript-tools: richer TS/JS support than ts_ls
+	-- (inlay hints, auto-organize imports, file operations, etc.)
+	{
+		"pmizio/typescript-tools.nvim",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		ft = { "typescript", "typescriptreact", "javascript", "javascriptreact" },
+		config = function()
+			require("typescript-tools").setup({
+				settings = {
+					tsdiagnostics = {
+						inlayHints = {
+							parameterNames = { enabled = "all" },
+							parameterTypes = { enabled = "all" },
+							variableTypes = { enabled = true },
+							propertyDeclarationTypes = { enabled = true },
+							functionReturnTypes = { enabled = true },
+							genericTypes = { enabled = true },
+						},
+					},
+					tsserver_format_options = {
+						indentSize = 2,
+						tabSize = 2,
+						convertTabsToSpaces = false,
+					},
+				},
+			})
+
 		end,
 	},
 }
