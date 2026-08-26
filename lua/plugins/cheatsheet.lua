@@ -26,6 +26,7 @@ return {
 			{ "<leader>r", group = "Rest HTTP" },
 			{ "<leader>c", group = "Code / CSV" },
 			{ "<leader>s", group = "Splits" },
+			{ "<leader>t", group = "Toggle / Theme" },
 		})
 
 		vim.keymap.set("n", "<leader>?", function()

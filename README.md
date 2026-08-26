@@ -27,6 +27,8 @@ A personal Neovim setup built on [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ## Language Support
 
+> Inlay hints (types, parameter names) are enabled by default for Go, Rust, Python, TypeScript, C/C++, and Lua. Toggle with `<leader>ti`. CodeLens (run/test labels) is also enabled where supported.
+
 | Language | LSP (mason) | Format (conform) | Debug adapter |
 |---|---|---|---|
 | JavaScript / TypeScript (JSX/TSX) | `typescript-tools.nvim`, `eslint` | prettier | pwa-node / pwa-chrome |
@@ -110,6 +112,8 @@ Pick the Python environment with `<leader>pv` (venv-selector).
 | `<leader>rn` | Rename symbol |
 | `<leader>ca` | Code action |
 | `<leader>lf` | Format via LSP |
+| `<leader>lc` | Run CodeLens (e.g. run nearest test) |
+| `<leader>ti` | Toggle inlay hints (types, param names) |
 | `[d` / `]d` | Previous / next diagnostic |
 | `<leader>ld` | Show diagnostic in floating window |
 

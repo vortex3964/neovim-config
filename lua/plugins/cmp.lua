@@ -49,10 +49,9 @@ return {
 					auto_show = true,
 					window = { border = "rounded" },
 				},
-				accept = {
-					-- Disabled: custom snippets.expand already adds () for function completions
-					auto_brackets = { enabled = false },
-				},
+			accept = {
+				auto_brackets = { enabled = true },
+			},
 			},
 			sources = {
 				default = { "lsp", "path", "snippets", "buffer" },
