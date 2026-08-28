@@ -46,6 +46,7 @@ require("lazy").setup({
 	require("plugins.persistence"),
 	require("plugins.database"),
 	require("plugins.special"),
+	require("plugins.react"),
 	require("plugins.csv"),
 	require("plugins.pdf"),
 	require("core.terminal"),

@@ -215,3 +215,104 @@ Dashboard also has a "Restore Session" button (`s`).
 - Shortcuts worth memorizing: `<TAB>` in blink completion accepts the highlighted item; `<C-space>` force-opens completion.
 - **Function completions** insert `foo()` with the cursor between parens (not `foo(int x, int y)`). This is handled by a custom snippet expand function in `plugins/cmp.lua`.
 - **Completion deduplication** is enabled for the LSP source to prevent the same item from appearing twice.
+
+## Web Dev Intended Flow
+
+This section explains how to use the React, React Native, and Electron features day-to-day.
+
+### First time setup
+
+1. Install browser-sync globally (needed for live preview on browser and phone):
+   ```bash
+   npm install -g browser-sync
+   ```
+2. Restart Neovim. lazy.nvim will install the new plugins automatically.
+
+### React web app
+
+1. Create your app:
+   ```bash
+   npx create-react-app my-app
+   cd my-app
+   npm start
+   ```
+2. Open Neovim in the project folder: `nvim .`
+3. Start coding. When you type `<div>` and press `>`, the closing tag `</div>` appears automatically.
+4. To see your app live in the browser, press `<leader>wp` (preview). This opens browser-sync.
+5. To proxy to your running dev server (e.g. localhost:3000), press `<leader>wP` and enter the port.
+6. To run npm scripts without leaving Neovim, press `<leader>wr` and pick a script (dev, build, test, etc.).
+7. To add an import, press `<leader>wi` and search for the component or function you want to import.
+8. To organize imports, press `<leader>wc`. To add missing imports, press `<leader>wa`.
+
+### React Native app
+
+1. Create your app:
+   ```bash
+   npx react-native init MyApp
+   cd MyApp
+   ```
+2. Start the Metro bundler: `npx react-native start`
+3. Open Neovim in the project folder: `nvim .`
+4. To debug on a device or emulator, press `<leader>wd`. This attaches the debugger to the Hermes engine.
+5. Set breakpoints with `<leader>db`, then use `<leader>dc` to continue, `<leader>di` to step into, `<leader>do` to step over.
+6. To preview on your phone, run the app on a device or emulator. The browser-sync preview works for the web version of React Native as well.
+
+### Electron app
+
+1. Create your app:
+   ```bash
+   mkdir my-electron-app && cd my-electron-app
+   npm init -y
+   npm install electron --save-dev
+   ```
+2. Set up your main.js and renderer files.
+3. Open Neovim in the project folder: `nvim .`
+4. To debug the main process, press `<leader>dc` and choose "Electron: Main" from the list.
+5. To debug the renderer (the browser window), choose "Electron: Renderer".
+6. For web-based Electron apps, you can also use "Chrome: Launch" to open and debug in Chrome.
+
+### Live preview on your phone
+
+1. Make sure your computer and phone are on the same Wi-Fi network.
+2. In Neovim, press `<leader>wP` and enter your dev server port (e.g. 3000).
+3. browser-sync will start and show a URL.
+4. Open that URL on your phone. Every time you save a file, the phone browser updates automatically.
+
+### Debugging cheat sheet
+
+| What you want | What to press |
+|---|---|
+| Set a breakpoint | `<leader>db` |
+| Start / continue debugging | `<leader>dc` |
+| Step into a function | `<leader>di` |
+| Step over a line | `<leader>do` |
+| Step out of a function | `<leader>dO` |
+| Stop debugging | `<leader>dx` |
+| Toggle the debug panel | `<leader>du` |
+| Debug React Native (Hermes) | `<leader>wd` |
+
+### npm / bun script runner
+
+| Key | What it does |
+|---|---|
+| `<leader>wr` | Run a script (shows a list of all scripts in your package.json) |
+| `<leader>wl` | Open the task list panel |
+| `<leader>wt` | Toggle the task list panel |
+
+### Import helpers
+
+| Key | What it does |
+|---|---|
+| `<leader>wi` | Open the import picker (searches your codebase for existing imports) |
+| `<leader>wc` | Organize imports (sort and remove unused) |
+| `<leader>wa` | Add all missing imports automatically |
+
+### Browser preview
+
+| Key | What it does |
+|---|---|
+| `<leader>wp` | Preview current file in the browser (live reload) |
+| `<leader>wo` | Open the browser-sync URL |
+| `<leader>wP` | Proxy to a running dev server (e.g. localhost:3000) |
+| `<leader>wR` | Restart browser-sync |
+| `<leader>wx` | Stop browser-sync |

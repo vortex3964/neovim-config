@@ -22,20 +22,85 @@ return {
 			-- Go
 			require("dap-go").setup()
 
-			-- JS/TS
+			-- JS/TS — includes Electron, React, and browser debugging
 			require("dap-vscode-js").setup({
 				debugger_path = vim.fn.stdpath("data") .. "/mason/packages/js-debug-adapter",
-				adapters = { "pwa-node", "pwa-chrome" },
+				adapters = { "pwa-node", "pwa-chrome", "pwa-msedge", "node-terminal" },
 			})
 
-			for _, lang in ipairs({ "javascript", "typescript" }) do
+			local js_based_languages = {
+				"javascript", "typescript",
+				"javascriptreact", "typescriptreact",
+			}
+
+			for _, lang in ipairs(js_based_languages) do
 				dap.configurations[lang] = {
+					-- Node: launch current file
 					{
 						type = "pwa-node",
 						request = "launch",
-						name = "Launch file",
+						name = "Node: Launch file",
 						program = "${file}",
 						cwd = "${workspaceFolder}",
+						sourceMaps = true,
+					},
+					-- Node: attach to running process
+					{
+						type = "pwa-node",
+						request = "attach",
+						name = "Node: Attach",
+						processId = require("dap.utils").pick_process,
+						cwd = "${workspaceFolder}",
+						sourceMaps = true,
+					},
+					-- Electron: debug main process
+					{
+						type = "pwa-node",
+						request = "launch",
+						name = "Electron: Main",
+						runtimeExecutable = "electron",
+						runtimeArgs = { "--remote-debugging-port=9222", "${workspaceFolder}" },
+						cwd = "${workspaceFolder}",
+						sourceMaps = true,
+						skipFiles = { "<node_internals>/**", "node_modules/**" },
+					},
+					-- Electron: attach to renderer process
+					{
+						type = "pwa-chrome",
+						request = "attach",
+						name = "Electron: Renderer",
+						port = 9222,
+						webRoot = "${workspaceFolder}",
+						sourceMaps = true,
+						skipFiles = { "<node_internals>/**", "node_modules/**" },
+					},
+					-- Chrome: launch browser for web apps
+					{
+						type = "pwa-chrome",
+						request = "launch",
+						name = "Chrome: Launch",
+						url = "http://localhost:3000",
+						webRoot = "${workspaceFolder}",
+					sourceMaps = true,
+					userDataDir = "${workspaceFolder}/.vscode/chrome-debug",
+					},
+					-- Chrome: attach to running instance
+					{
+						type = "pwa-chrome",
+						request = "attach",
+						name = "Chrome: Attach",
+						port = 9222,
+						webRoot = "${workspaceFolder}",
+						sourceMaps = true,
+					},
+					-- Edge: launch browser
+					{
+						type = "pwa-msedge",
+						request = "launch",
+						name = "Edge: Launch",
+						url = "http://localhost:3000",
+						webRoot = "${workspaceFolder}",
+						sourceMaps = true,
 					},
 				}
 			end
