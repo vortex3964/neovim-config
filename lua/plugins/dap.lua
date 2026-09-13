@@ -34,6 +34,13 @@ return {
 			}
 
 			for _, lang in ipairs(js_based_languages) do
+				-- Preserve React Native entries if react.lua already ran (load-order safe)
+				local rn_entries = {}
+				for _, c in ipairs(dap.configurations[lang] or {}) do
+					if c.type == "reactnativedirect" then
+						table.insert(rn_entries, c)
+					end
+				end
 				dap.configurations[lang] = {
 					-- Node: launch current file
 					{
@@ -103,6 +110,9 @@ return {
 						sourceMaps = true,
 					},
 				}
+				for _, c in ipairs(rn_entries) do
+					table.insert(dap.configurations[lang], c)
+				end
 			end
 
 			-- C/C++/Rust via codelldb

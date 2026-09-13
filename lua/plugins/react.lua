@@ -101,28 +101,69 @@ return {
   {
     "AkisArou/nvim-dap-react-native",
     ft = { "javascript", "javascriptreact", "typescript", "typescriptreact" },
+    build = "npm ci",
     dependencies = {
       "mfussenegger/nvim-dap",
+      "mxsdev/nvim-dap-vscode-js",
       "nvim-neotest/nvim-nio",
       "rcarriga/nvim-dap-ui",
     },
     config = function()
-      local ok, dap_rn = pcall(require, "dap-react-native")
-      if not ok then return end
-
-      -- Create the adapter that bridges DAP to React Native DevTools / Hermes CDP
-      dap_rn.setup()
-
-      -- Add attach configurations for all JS/TS filetypes
       local dap = require("dap")
+      local ok, dap_rn = pcall(require, "dap-react-native")
+      if not ok then
+        vim.notify("dap-react-native not found", vim.log.levels.WARN)
+        return
+      end
+
+      -- Base adapter must be a vscode-js-debug (pwa-node) adapter table or function.
+      -- Prefer the one registered by nvim-dap-vscode-js; fall back to the
+      -- mason js-debug-adapter install so load order doesn't matter.
+      local base = dap.adapters["pwa-node"]
+      if base == nil then
+        local server_path = vim.fn.stdpath("data")
+          .. "/mason/packages/js-debug-adapter/js-debug/src/dapDebugServer.js"
+        if vim.fn.filereadable(server_path) == 1 then
+          base = {
+            type = "server",
+            host = "localhost",
+            port = "${port}",
+            executable = {
+              command = "node",
+              args = { server_path, "${port}" },
+            },
+          }
+        end
+      end
+      if base == nil then
+        vim.notify(
+          "dap-react-native: no pwa-node base adapter found. Install js-debug-adapter via :Mason",
+          vim.log.levels.WARN
+        )
+        return
+      end
+
+      -- Bridge DAP to React Native DevTools / Hermes CDP
+      dap.adapters.reactnativedirect = dap_rn.create_adapter(base)
+
+      -- Add attach configurations for all JS/TS filetypes (deduped for reload safety)
       for _, lang in ipairs({ "javascript", "javascriptreact", "typescript", "typescriptreact" }) do
         dap.configurations[lang] = dap.configurations[lang] or {}
-        table.insert(dap.configurations[lang], {
-          type = "reactnativedirect",
-          request = "attach",
-          name = "React Native: Attach Hermes",
-          cwd = "${workspaceFolder}",
-        })
+        local exists = false
+        for _, c in ipairs(dap.configurations[lang]) do
+          if c.type == "reactnativedirect" and c.name == "React Native: Attach Hermes" then
+            exists = true
+            break
+          end
+        end
+        if not exists then
+          table.insert(dap.configurations[lang], {
+            type = "reactnativedirect",
+            request = "attach",
+            name = "React Native: Attach Hermes",
+            cwd = "${workspaceFolder}",
+          })
+        end
       end
 
       vim.keymap.set("n", "<leader>wd", function()
