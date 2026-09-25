@@ -122,8 +122,25 @@ return {
 				map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
 				map("<leader>ca", vim.lsp.buf.code_action, "Code action")
 				map("<leader>lf", vim.lsp.buf.format, "Format via LSP")
-				map("[d", vim.diagnostic.goto_prev, "Prev diagnostic")
-				map("]d", vim.diagnostic.goto_next, "Next diagnostic")
+				-- vim.diagnostic.goto_prev/goto_next are deprecated; jump() takes a
+				-- signed count. on_jump() keeps the diagnostic float that
+				-- goto_prev/goto_next used to open automatically.
+				local diagnostic_jump = function(count)
+					return function()
+						vim.diagnostic.jump({
+							count = count,
+							on_jump = function(_, bufnr)
+								vim.diagnostic.open_float({
+									bufnr = bufnr,
+									scope = "cursor",
+									focus = false,
+								})
+							end,
+						})
+					end
+				end
+				map("[d", diagnostic_jump(-1), "Prev diagnostic")
+				map("]d", diagnostic_jump(1), "Next diagnostic")
 				map("<leader>ld", vim.diagnostic.open_float, "Show diagnostic")
 				map("<leader>lc", vim.lsp.codelens.run, "Run CodeLens")
 
@@ -131,18 +148,17 @@ return {
 				if client then
 					-- Enable inlay hints for this buffer (if server supports it)
 					if client.server_capabilities.inlayHintProvider then
-						vim.lsp.inlay_hint.enable(false, { bufnr = bufnr })
+						vim.lsp.inlay_hint.enable(true, { bufnr = bufnr })
 					end
-					-- Enable CodeLens (run/test labels above functions)
-					if client.server_capabilities.codeLensProvider then
-						vim.api.nvim_create_autocmd({ "InsertLeave", "BufEnter", "CursorHold" }, {
-							buffer = bufnr,
-							callback = function()
-								vim.lsp.codelens.enable(true, { bufnr = bufnr })
-							end,
-						})
-						vim.lsp.codelens.enable(true, { bufnr = bufnr })
-					end
+					-- CodeLens (run/test labels above functions)
+					-- NOTE: vim.lsp.codelens.refresh() is deprecated on Neovim 0.12+.
+					-- enable() starts a per-buffer provider that requests lenses on
+					-- attach, re-requests them (debounced) whenever the buffer
+					-- changes, and follows workspace/codeLens/refresh pushes from
+					-- the server, so the old InsertLeave/BufEnter/CursorHold
+					-- refresh autocmds are unnecessary now. enable() only activates
+					-- for clients that actually support code lenses.
+					vim.lsp.codelens.enable(true, { bufnr = bufnr })
 					-- Enable reference highlighting (highlight usages on cursor hold)
 					if client.server_capabilities.documentHighlightProvider then
 						local hl_group = vim.api.nvim_create_augroup("lsp_document_highlight", { clear = false })
@@ -163,12 +179,11 @@ return {
 		})
 
 		-- Toggle inlay hints for the current buffer
+		-- NOTE: is_enabled() takes a filter *table*, not a bufnr number.
 		vim.keymap.set("n", "<leader>ti", function()
 			local bufnr = vim.api.nvim_get_current_buf()
-			local ok, enabled = pcall(vim.lsp.inlay_hint.is_enabled, bufnr)
-			if ok then
-				vim.lsp.inlay_hint.enable(not enabled, { bufnr = bufnr })
-			end
+			local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = bufnr })
+			vim.lsp.inlay_hint.enable(not enabled, { bufnr = bufnr })
 		end, { desc = "Toggle inlay hints" })
 
 			require("mason-lspconfig").setup({
