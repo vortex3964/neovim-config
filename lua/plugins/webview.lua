@@ -1,7 +1,8 @@
 return {
   {
-    "barrett-ruth/live-server.nvim",
-    build = "npm install -g live-server",
+    -- GitHub repo is deleted Oct 31, 2026; canonical source is Forgejo.
+    url = "https://forge.barrettruth.com/barrettruth/live-server.nvim",
+    -- No build step: the server is pure Lua (libuv), zero external deps.
     ft = { "html", "css", "javascript", "typescript" },
     keys = {
       { "<leader>ls", "<cmd>LiveServerStart<CR>", desc = "Start live server" },
@@ -9,7 +10,8 @@ return {
     },
     init = function()
       vim.g.live_server = {
-        args = { "--port=8080", "--no-browser" }
+        port = 8080,
+        browser = false,
       }
     end,
   },
