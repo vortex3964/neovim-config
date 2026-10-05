@@ -42,7 +42,7 @@ vim.opt.sidescrolloff = 8
 --random
 vim.opt.hlsearch = true
 vim.opt.clipboard:append("unnamedplus")
-vim.opt.updatetime = 50
+vim.opt.updatetime = 250
 vim.opt.showmatch = true
 vim.opt.splitbelow = true
 vim.opt.splitright = true
@@ -52,12 +52,13 @@ vim.o.cursorline = false -- highlight the current line
 --show mode
 vim.o.showmode = false
 
--- Auto-save when exiting Insert mode
+-- Auto-save when exiting Insert mode (only real file buffers with changes,
+-- so terminal/nofile buffers and clean files don't churn)
 vim.api.nvim_create_autocmd("InsertLeave", {
     pattern = "*",
     callback = function()
-        -- Only save if the buffer is modifiable and not readonly
-        if vim.bo.modifiable and not vim.bo.readonly then
+        if vim.bo.modified and vim.bo.modifiable and not vim.bo.readonly
+            and vim.bo.buftype == "" and vim.fn.expand("%:p") ~= "" then
             vim.cmd("silent! write")
         end
     end,

@@ -105,6 +105,16 @@ return {
 			},
 		})
 
+		-- emmet_ls: expand/completions for html/css AND jsx/tsx (React/Electron
+		-- renderer code). Explicit filetypes so abbreviations work in .jsx/.tsx.
+		vim.lsp.config("emmet_ls", {
+			filetypes = {
+				"html", "css", "scss", "sass", "less",
+				"javascript", "javascriptreact", "typescript", "typescriptreact",
+				"vue", "svelte", "astro",
+			},
+		})
+
 		-- on_attach equivalent via LspAttach autocmd
 		vim.api.nvim_create_autocmd("LspAttach", {
 			callback = function(args)
@@ -249,5 +259,24 @@ return {
 			})
 
 		end,
+	},
+	-- Auto-install formatters/debuggers that mason-lspconfig does NOT cover
+	-- (LSP servers are handled above; without this, conform <leader>cf failed
+	-- for js/ts/py/c and JS/Electron DAP had no adapter)
+	{
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		dependencies = { "mason-org/mason.nvim" },
+		event = "VeryLazy",
+		opts = {
+			ensure_installed = {
+				"prettier", -- conform: javascript/typescript/html/css/json/yaml/markdown
+				"stylua", -- conform: lua
+				"ruff", -- conform: python (ruff_format)
+				"clang-format", -- conform: c/cpp
+				"js-debug-adapter", -- dap: node/chrome/electron/react-native
+			},
+			auto_update = false,
+			run_on_start = true,
+		},
 	},
 }

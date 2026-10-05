@@ -24,12 +24,13 @@ return {
 			},
 		})
 
-		-- Keymaps
-		vim.keymap.set("n", ">t", function()
+		-- Keymaps ([t/]t and { / } are taken by builtin tag/paragraph
+		-- motions, and >t/<t shadowed the indent operators)
+		vim.keymap.set("n", "<leader>tn", function()
 			require("todo-comments").jump_next()
 		end, { desc = "Next todo comment" })
 
-		vim.keymap.set("n", "<t", function()
+		vim.keymap.set("n", "<leader>tp", function()
 			require("todo-comments").jump_prev()
 		end, { desc = "Previous todo comment" })
 	end,

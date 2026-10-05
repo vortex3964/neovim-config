@@ -60,8 +60,10 @@ return {
 		config = function()
 			require("aerial").setup({
 				on_attach = function(bufnr)
-					vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr, desc = "Prev symbol" })
-					vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr, desc = "Next symbol" })
+					-- NOTE: { / } are builtin paragraph motions and [a / ]a are
+					-- builtin arglist nav, so use leader maps for aerial nav.
+					vim.keymap.set("n", "<leader>ap", "<cmd>AerialPrev<CR>", { buffer = bufnr, desc = "Prev symbol" })
+					vim.keymap.set("n", "<leader>an", "<cmd>AerialNext<CR>", { buffer = bufnr, desc = "Next symbol" })
 				end,
 			})
 		end,

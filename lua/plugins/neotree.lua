@@ -7,6 +7,14 @@ return {
 		"MunifTanjim/nui.nvim",
 		{
 			"3rd/image.nvim",
+			-- Kitty graphics only exist in kitty/wezterm/ghostty. Loading it in
+			-- gnome-terminal just spams "cannot query terminal size" errors,
+			-- so skip it there (neo-tree works fine without image previews).
+			cond = function()
+				return vim.env.KITTY_WINDOW_ID ~= nil
+					or vim.env.WEZTERM_PANE ~= nil
+					or vim.env.GHOSTTY_RESOURCES_DIR ~= nil
+			end,
 			opts = {
 				backend = "kitty", -- or "ueberzug" / "ghostty" / "wezterm"
 				integrations = {
