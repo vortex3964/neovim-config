@@ -66,15 +66,16 @@ return {
     dependencies = { "MunifTanjim/nui.nvim" },
     config = function()
       require("package-info").setup({
-        colors = {
-          up_to_date = "#3C4048",
-          outdated   = "#fc514e",
+        highlights = {
+          up_to_date = { fg = "#3C4048" },
+          outdated   = { fg = "#fc514e" },
         },
         icons = {
           enable = true,
-          style  = {
-            up_to_date = "  ",
-            outdated   = "  ",
+          style = {
+            up_to_date = "|  ",
+            outdated = "|  ",
+            invalid = "|  ",
           },
         },
         autostart              = true,
