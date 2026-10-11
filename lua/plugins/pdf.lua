@@ -1,7 +1,7 @@
 -- PDF viewer: open and navigate PDFs inside Neovim
 return {
 	"basola21/PDFview",
-	lazy = false,
+	ft = { "pdf" },
 	dependencies = { "nvim-telescope/telescope.nvim" },
 	keys = {
 		{ "<leader>po", "<cmd>lua require('pdfview').open()<CR>", desc = "Open PDF" },

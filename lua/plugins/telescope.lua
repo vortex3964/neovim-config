@@ -2,6 +2,16 @@
 return {
 	"nvim-telescope/telescope.nvim",
 	branch = "master",
+	cmd = "Telescope",
+	keys = {
+		{ "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find files" },
+		{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Live grep in project" },
+		{ "<leader>fb", "<cmd>Telescope buffers<cr>", desc = "Find open buffers" },
+		{ "<leader>fw", "<cmd>Telescope grep_string<cr>", desc = "Grep word under cursor" },
+		{ "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent files" },
+		{ "<leader>fd", "<cmd>Telescope diagnostics<cr>", desc = "Search diagnostics" },
+		{ "<leader>/", "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Fuzzy search in current file" },
+	},
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-tree/nvim-web-devicons",

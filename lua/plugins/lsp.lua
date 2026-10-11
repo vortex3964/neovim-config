@@ -1,6 +1,8 @@
 return {
 	{
 		"mason-org/mason.nvim",
+		cmd = { "Mason", "MasonInstall", "MasonUninstall", "MasonUninstallAll", "MasonLog" },
+		event = { "BufReadPre", "BufNewFile" },
 		config = function()
 			require("mason").setup({
 				ui = { border = "rounded" },
@@ -9,12 +11,57 @@ return {
 	},
 	{
 		"mason-org/mason-lspconfig.nvim",
+		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"mason-org/mason.nvim",
 			"neovim/nvim-lspconfig",
 		},
 		config = function()
-			local capabilities = require("blink.cmp").get_lsp_capabilities()
+			-- NOTE: do NOT require("blink.cmp") here. That forces the
+			-- completion engine (+ LuaSnip + snippets) to load at startup
+			-- even though blink.cmp is lazy on InsertEnter. These are the
+			-- same capabilities blink advertises (see
+			-- blink.cmp.sources.lib.get_lsp_capabilities), inlined so LSP
+			-- servers start with full completion support without loading blink.
+			local capabilities = vim.tbl_deep_extend("force", vim.lsp.protocol.make_client_capabilities(), {
+				textDocument = {
+					completion = {
+						completionItem = {
+							snippetSupport = true,
+							commitCharactersSupport = false,
+							documentationFormat = { "markdown", "plaintext" },
+							deprecatedSupport = true,
+							preselectSupport = false,
+							tagSupport = { valueSet = { 1 } },
+							insertReplaceSupport = true,
+							resolveSupport = {
+								properties = {
+									"documentation",
+									"detail",
+									"additionalTextEdits",
+									"command",
+									"data",
+								},
+							},
+							insertTextModeSupport = {
+								valueSet = { 1 },
+							},
+							labelDetailsSupport = true,
+						},
+						completionList = {
+							itemDefaults = {
+								"commitCharacters",
+								"editRange",
+								"insertTextFormat",
+								"insertTextMode",
+								"data",
+							},
+						},
+						contextSupport = true,
+						insertTextMode = 1,
+					},
+				},
+			})
 			-- We complete functions as bare names (foo) and let blink.cmp's
 			-- accept.auto_brackets add () with the cursor inside.
 			-- If the client advertises snippetSupport, clangd (and others)
@@ -295,7 +342,7 @@ return {
 				"js-debug-adapter", -- dap: node/chrome/electron/react-native
 			},
 			auto_update = false,
-			run_on_start = true,
+			run_on_start = false,
 		},
 	},
 }

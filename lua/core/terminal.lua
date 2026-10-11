@@ -1,6 +1,13 @@
 return {
   "akinsho/toggleterm.nvim",
   version = "*",
+  cmd = { "ToggleTerm", "TermExec", "TermSelect", "ToggleTermToggleAll" },
+  keys = {
+    { "<A-v>", "<cmd>ToggleTerm direction=vertical<cr>", desc = "Toggle vertical terminal", mode = { "n", "t" } },
+    { "<A-h>", "<cmd>ToggleTerm direction=horizontal<cr>", desc = "Toggle horizontal terminal", mode = { "n", "t" } },
+    { "<A-i>", "<cmd>ToggleTerm direction=float<cr>", desc = "Toggle floating terminal", mode = { "n", "t" } },
+    { "<c-\\>", desc = "Toggle terminal", mode = { "n", "t" } },
+  },
   config = function()
     require("toggleterm").setup({
       -- Dynamically size the terminal based on direction

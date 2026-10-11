@@ -1,6 +1,21 @@
 return {
 	"nvim-neo-tree/neo-tree.nvim",
 	branch = "v3.x",
+	cmd = { "Neotree", "NeotreeFocus", "NeotreeToggle", "NeotreeReveal" },
+	keys = {
+		{
+			"<leader>e",
+			function()
+				local reveal_file = vim.fn.expand("%:p")
+				require("neo-tree.command").execute({
+					action = "focus",
+					reveal_file = reveal_file,
+					reveal_force_cwd = true,
+				})
+			end,
+			desc = "Focus Neotree",
+		},
+	},
 	dependencies = {
 		"nvim-lua/plenary.nvim",
 		"nvim-tree/nvim-web-devicons",

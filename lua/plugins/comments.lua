@@ -1,6 +1,24 @@
 -- TODO comments
 return {
 	"folke/todo-comments.nvim",
+	event = { "BufReadPre", "BufNewFile" },
+	cmd = { "TodoTrouble", "TodoTelescope", "TodoLocList", "TodoQuickFix" },
+	keys = {
+		{
+			"<leader>tn",
+			function()
+				require("todo-comments").jump_next()
+			end,
+			desc = "Next todo comment",
+		},
+		{
+			"<leader>tp",
+			function()
+				require("todo-comments").jump_prev()
+			end,
+			desc = "Previous todo comment",
+		},
+	},
 	dependencies = { "nvim-lua/plenary.nvim" },
 	config = function()
 		require("todo-comments").setup({
