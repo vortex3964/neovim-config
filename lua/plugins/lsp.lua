@@ -15,6 +15,13 @@ return {
 		},
 		config = function()
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
+			-- We complete functions as bare names (foo) and let blink.cmp's
+			-- accept.auto_brackets add () with the cursor inside.
+			-- If the client advertises snippetSupport, clangd (and others)
+			-- reply with snippet items like foo(${1:int x}, ...) and even
+			-- re-add them on completionItem/resolve, bypassing any menu
+			-- filtering. Disabling it forces PlainText completions.
+			capabilities.textDocument.completion.completionItem.snippetSupport = false
 			-- NOTE: do NOT nil out capabilities.textDocument.diagnostic here.
 			-- That disables LSP pull diagnostics, and then every server
 			-- spams "server_request: no handler found for
@@ -84,6 +91,10 @@ return {
 		-- clangd: inlay hints are a *command-line* flag, not a
 		-- `settings` table (clangd ignores `settings.clangd.InlayHints`,
 		-- so the old block was a silent no-op). Pass --inlay-hints here.
+		-- NOTE: do NOT pass --function-arg-placeholders here. That flag
+		-- makes clangd expand foo() into foo(int x, int y) on completion.
+		-- Without it, clangd completes just the name and blink.cmp's
+		-- accept.auto_brackets adds () with the cursor inside.
 		vim.lsp.config("clangd", {
 			cmd = {
 				"clangd",
@@ -91,7 +102,6 @@ return {
 				"--clang-tidy",
 				"--header-insertion=iwyu",
 				"--completion-style=detailed",
-				"--function-arg-placeholders",
 				"--fallback-style=llvm",
 				"--inlay-hints=true",
 			},

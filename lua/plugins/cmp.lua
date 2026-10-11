@@ -15,17 +15,6 @@ return {
 			},
 			snippets = {
 				preset = "luasnip",
-				-- Custom expand: strip function arguments from LSP snippets
-				-- so that foo(int x, int y) becomes foo() with cursor between parens
-				expand = function(snippet)
-					-- Match: functionName(anything here)possibly-more-stuff
-					-- (.-) is non-greedy: stops at the FIRST closing paren
-					local fn_name, args, rest = snippet:match("^(%w+)%((.-)%)(.*)$")
-					if fn_name and args then
-						snippet = fn_name .. "($1)" .. rest
-					end
-					vim.snippet.expand(snippet)
-				end,
 			},
 			keymap = {
 				preset = "none",
@@ -50,7 +39,29 @@ return {
 					window = { border = "rounded" },
 				},
 			accept = {
-				auto_brackets = { enabled = true },
+				auto_brackets = {
+					enabled = true,
+					-- blink blocks auto-brackets for some filetypes by default
+					-- (it expects the server to supply the parens), but since we
+					-- strip server parens/args down to a bare name, re-allow it
+					-- for every language in use so Tab always gives foo()
+					-- with the cursor inside.
+					force_allow_filetypes = {
+						"c", "cpp", -- clangd
+						"rust", -- rust_analyzer (blocked by blink default)
+						"sql", -- sqlls (blocked by blink default)
+						"go", -- gopls
+						"python", -- pyright
+						"lua", -- lua_ls
+						"typescript", "typescriptreact", "javascript", "javascriptreact", -- typescript-tools
+						"html", "css", "scss", "less", "json", "jsonc", -- web stack
+						"sh", "bash", -- bashls
+						"yaml", -- yamlls
+						"cmake", -- cmake
+						"markdown", -- marksman
+						"dockerfile", -- dockerls
+					},
+				},
 			},
 			},
 			sources = {
@@ -60,6 +71,40 @@ return {
 						transform_items = (function()
 							local seen = {}
 							local last_cursor = nil
+							local function bare_name(item)
+								local label = item.label or ""
+								return label:match("^[^%(%s]+") or label
+							end
+							-- Strip `foo(args)` / `foo()` down to bare `foo` so
+							-- blink's auto_brackets inserts `()` with cursor inside.
+							-- Runs on both initial completions AND resolve results
+							-- (blink re-runs transform_items after resolve).
+							local function strip(item)
+								-- Real snippet items (loops, etc.): leave alone.
+								if item.kind == vim.lsp.protocol.CompletionItemKind.Snippet then
+									return
+								end
+								if item.insertTextFormat == vim.lsp.protocol.InsertTextFormat.Snippet then
+									local name = bare_name(item)
+									item.insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText
+									item.insertText = name
+									item.textEditText = nil
+									if item.textEdit ~= nil then
+										item.textEdit.newText = name
+									end
+								elseif item.textEdit ~= nil and item.textEdit.newText ~= nil then
+									if item.kind == vim.lsp.protocol.CompletionItemKind.Function
+										or item.kind == vim.lsp.protocol.CompletionItemKind.Method
+										or item.kind == vim.lsp.protocol.CompletionItemKind.Constructor
+									then
+										local name = bare_name(item)
+										if name ~= "" and item.textEdit.newText:sub(1, #name) == name then
+											item.textEdit.newText = name
+											item.insertText = name
+										end
+									end
+								end
+							end
 							return function(ctx, items)
 								-- Reset seen when cursor moves (new completion session)
 								local cursor = vim.api.nvim_win_get_cursor(0)
@@ -67,6 +112,9 @@ return {
 								if cursor_key ~= last_cursor then
 									seen = {}
 									last_cursor = cursor_key
+								end
+								for _, item in ipairs(items) do
+									strip(item)
 								end
 								return vim.iter(items)
 									:filter(function(item)
