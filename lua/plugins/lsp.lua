@@ -15,8 +15,12 @@ return {
 		},
 		config = function()
 			local capabilities = require("blink.cmp").get_lsp_capabilities()
-			-- Disable pull diagnostics to prevent duplicates with push diagnostics (Neovim 0.10+ issue)
-			capabilities.textDocument.diagnostic = nil
+			-- NOTE: do NOT nil out capabilities.textDocument.diagnostic here.
+			-- That disables LSP pull diagnostics, and then every server
+			-- spams "server_request: no handler found for
+			-- workspace/diagnostic/refresh" (the exact WARN filling your log).
+			-- Neovim 0.11+ handles pull diagnostics natively with no
+			-- duplicates, so pass blink capabilities through untouched.
 			-- Apply capabilities to ALL servers, before mason-lspconfig enables them
 			vim.lsp.config("*", {
 				capabilities = capabilities,
@@ -77,24 +81,29 @@ return {
 			},
 		})
 
-		-- clangd: inlay hints for C/C++
+		-- clangd: inlay hints are a *command-line* flag, not a
+		-- `settings` table (clangd ignores `settings.clangd.InlayHints`,
+		-- so the old block was a silent no-op). Pass --inlay-hints here.
 		vim.lsp.config("clangd", {
-			settings = {
-				clangd = {
-					InlayHints = {
-						Enabled = true,
-						ParameterNames = true,
-						DeducedParameters = true,
-					},
-				},
+			cmd = {
+				"clangd",
+				"--background-index",
+				"--clang-tidy",
+				"--header-insertion=iwyu",
+				"--completion-style=detailed",
+				"--function-arg-placeholders",
+				"--fallback-style=llvm",
+				"--inlay-hints=true",
 			},
 		})
 
 		-- lua_ls: inlay hints for Lua
+		-- NOTE: the server schema is `Lua.hint` (singular). The old
+		-- `Lua.hints` (plural) key was silently ignored.
 		vim.lsp.config("lua_ls", {
 			settings = {
 				Lua = {
-					hints = {
+					hint = {
 						enable = true,
 						arrayIndex = "Enable",
 						paramName = "All",
