@@ -42,9 +42,10 @@ return {
       "nvim-lua/plenary.nvim",
     },
     config = function()
-      require("venv-selector").setup({
-        auto_select = true, -- auto selects venv if only one found
-      })
+      -- Pyright's interpreter is detected from ./venv, ./.venv, $VIRTUAL_ENV
+      -- or $CONDA_PREFIX in plugins/lsp.lua, so this is only needed to
+      -- override that choice per project (and to set VIRTUAL_ENV for terminals).
+      require("venv-selector").setup({})
 
       vim.api.nvim_create_autocmd("FileType", {
         pattern = "python",

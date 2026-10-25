@@ -80,6 +80,66 @@ return {
 				capabilities = capabilities,
 			})
 
+			-- Pyright does NOT auto-discover a project's ./venv (or ./.venv) the
+			-- way the VS Code Python extension does. Without an interpreter it
+			-- falls back to the system Python, so every third-party import is
+			-- "could not be resolved" and hover/completion has no docstrings for
+			-- library functions (numpy, sklearn, ...). Resolve the venv from the
+			-- buffer's project before the client starts.
+			local function project_python(bufnr)
+				local file = vim.api.nvim_buf_get_name(bufnr)
+				local dir = file ~= "" and vim.fs.dirname(file) or vim.fn.getcwd()
+				local root = vim.fs.root(bufnr, {
+					"pyrightconfig.json", "pyproject.toml", "setup.py", "setup.cfg",
+					"requirements.txt", "Pipfile", ".git",
+				}) or dir
+				local candidates = {
+					root .. "/.venv/bin/python",
+					root .. "/venv/bin/python",
+					root .. "/env/bin/python",
+					dir .. "/.venv/bin/python",
+					dir .. "/venv/bin/python",
+				}
+				if vim.env.VIRTUAL_ENV and vim.env.VIRTUAL_ENV ~= "" then
+					table.insert(candidates, vim.env.VIRTUAL_ENV .. "/bin/python")
+				end
+				if vim.env.CONDA_PREFIX and vim.env.CONDA_PREFIX ~= "" then
+					table.insert(candidates, vim.env.CONDA_PREFIX .. "/bin/python")
+				end
+				for _, python in ipairs(candidates) do
+					if vim.fn.executable(python) == 1 then
+						return python
+					end
+				end
+			end
+
+			-- Runs before vim.lsp.enable's FileType handler (registered below in
+			-- mason-lspconfig.setup), so pyright starts with the right
+			-- interpreter instead of being restarted after attaching.
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = "python",
+				callback = function(args)
+					local python = project_python(args.buf)
+					if not python then
+						python = vim.fn.exepath("python3")
+					end
+					if python == "" then
+						python = vim.fn.exepath("python")
+					end
+					if python ~= "" then
+						-- Overwriting pythonPath each time also prevents a venv
+						-- from a previously opened project leaking into this one.
+						vim.lsp.config("pyright", {
+							settings = {
+								python = {
+									pythonPath = python,
+								},
+							},
+						})
+					end
+				end,
+			})
+
 			-- pyright: optimized for data science / AI / backend Python work
 			--   - useLibraryCodeForTypes: analyze library code for better completions
 			--     (critical for numpy, pandas, torch, etc.)
@@ -94,11 +154,13 @@ return {
 							autoSearchPaths = true,
 							useLibraryCodeForTypes = true,
 							diagnosticMode = "openFilesOnly",
+							-- pyright's real option names (parameterTypes and
+							-- genericTypes don't exist, so they were ignored).
 							inlayHints = {
 								variableTypes = true,
 								functionReturnTypes = true,
-								parameterTypes = true,
-								genericTypes = true,
+								callArgumentNames = true,
+								pytestParameters = true,
 							},
 						},
 					},
