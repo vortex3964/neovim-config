@@ -69,8 +69,23 @@ return {
 				providers = {
 					lsp = {
 						transform_items = (function()
-							local seen = {}
-							local last_cursor = nil
+							local Kind = vim.lsp.protocol.CompletionItemKind
+							local code_kinds = {
+								[Kind.Function] = true,
+								[Kind.Method] = true,
+								[Kind.Constructor] = true,
+								[Kind.Variable] = true,
+								[Kind.Field] = true,
+								[Kind.Property] = true,
+								[Kind.Class] = true,
+								[Kind.Interface] = true,
+								[Kind.Module] = true,
+								[Kind.Struct] = true,
+								[Kind.Enum] = true,
+								[Kind.EnumMember] = true,
+								[Kind.Constant] = true,
+								[Kind.TypeParameter] = true,
+							}
 							local function bare_name(item)
 								local label = item.label or ""
 								return label:match("^[^%(%s]+") or label
@@ -81,7 +96,7 @@ return {
 							-- (blink re-runs transform_items after resolve).
 							local function strip(item)
 								-- Real snippet items (loops, etc.): leave alone.
-								if item.kind == vim.lsp.protocol.CompletionItemKind.Snippet then
+								if item.kind == Kind.Snippet then
 									return
 								end
 								if item.insertTextFormat == vim.lsp.protocol.InsertTextFormat.Snippet then
@@ -93,9 +108,9 @@ return {
 										item.textEdit.newText = name
 									end
 								elseif item.textEdit ~= nil and item.textEdit.newText ~= nil then
-									if item.kind == vim.lsp.protocol.CompletionItemKind.Function
-										or item.kind == vim.lsp.protocol.CompletionItemKind.Method
-										or item.kind == vim.lsp.protocol.CompletionItemKind.Constructor
+									if item.kind == Kind.Function
+										or item.kind == Kind.Method
+										or item.kind == Kind.Constructor
 									then
 										local name = bare_name(item)
 										if name ~= "" and item.textEdit.newText:sub(1, #name) == name then
@@ -105,29 +120,66 @@ return {
 									end
 								end
 							end
-							return function(ctx, items)
-								-- Reset seen when cursor moves (new completion session)
-								local cursor = vim.api.nvim_win_get_cursor(0)
-								local cursor_key = cursor[1] .. ":" .. cursor[2]
-								if cursor_key ~= last_cursor then
-									seen = {}
-									last_cursor = cursor_key
+							-- Emmet (enabled for JSX/TSX) can return an HTML tag
+							-- snippet with the same label as a real function, e.g.
+							-- `add` -> `<add>${1}</add>`. Deduping by label alone
+							-- kept whichever arrived first (usually Emmet), which
+							-- silently replaced the function item and its docs.
+							-- Rank real code symbols above snippets so the
+							-- documented function survives.
+							local function rank(item)
+								local score = 0
+								if item.kind ~= Kind.Snippet then
+									score = score + 10
 								end
+								if code_kinds[item.kind] then
+									score = score + 3
+								end
+								if item.documentation ~= nil and item.documentation ~= "" then
+									score = score + 2
+								end
+								if type(item.detail) == "string" and item.detail ~= "" then
+									score = score + 1
+								end
+								return score
+							end
+							return function(_, items)
+								local by_label, order = {}, {}
 								for _, item in ipairs(items) do
 									strip(item)
+									local label = item.label or ""
+									local existing = by_label[label]
+									if existing == nil then
+										by_label[label] = item
+										order[#order + 1] = label
+									elseif rank(item) > rank(existing) then
+										by_label[label] = item
+									end
 								end
-								return vim.iter(items)
-									:filter(function(item)
-										if item.label and seen[item.label] then
-											return false
-										end
-										seen[item.label] = true
-										return true
-									end)
-									:totable()
+								local result = {}
+								for _, label in ipairs(order) do
+									result[#result + 1] = by_label[label]
+								end
+								return result
 							end
 						end)(),
 					},
+				},
+			},
+			-- Show real code completions above Emmet tag snippets in
+			-- JSX/TSX (both attach to those buffers).
+			fuzzy = {
+				sorts = {
+					function(a, b)
+						local a_emmet = a.client_name == "emmet_ls"
+						local b_emmet = b.client_name == "emmet_ls"
+						if a_emmet == b_emmet then
+							return nil
+						end
+						return b_emmet
+					end,
+					"score",
+					"sort_text",
 				},
 			},
 			signature = {

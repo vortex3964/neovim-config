@@ -379,9 +379,9 @@ return {
 						},
 					},
 					tsserver_format_options = {
-						indentSize = 2,
-						tabSize = 2,
-						convertTabsToSpaces = false,
+						indentSize = 4,
+						tabSize = 4,
+						convertTabsToSpaces = true,
 					},
 				},
 			})
