@@ -11,6 +11,7 @@ return {
 			vim.g.db_ui_save_location = "~/.local/share/db_ui"
 		end,
 		keys = {
+			{ "<leader>zs", "<cmd>DBUI<CR>", desc = "Open DB UI" },
 			{ "<leader>zo", "<cmd>DBUIToggle<CR>", desc = "Toggle DB UI" },
 			{ "<leader>za", "<cmd>DBUIAddConnection<CR>", desc = "Add DB connection" },
 			{ "<leader>zf", "<cmd>DBUIFindBuffer<CR>", desc = "Find DB buffer" },

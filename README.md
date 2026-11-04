@@ -38,7 +38,7 @@ A personal Neovim setup built on [lazy.nvim](https://github.com/folke/lazy.nvim)
 | Python | `pyright` (tuned for data science, see below) | ruff_format | — (coming) |
 | Lua | `lua_ls` | stylua | — |
 | Markdown | `marksman` | prettier | — |
-| HTML / CSS / JSON / YAML / SQL / Bash / Docker | `html`, `cssls`, `jsonls`, `yamlls`, `sqlls`, `bashls`, `dockerls`, `tailwindcss`, `emmet_ls` | prettier (html/css/json/yaml) | — |
+| HTML / CSS / JSON / YAML / SQL / Bash / Docker | `html`, `cssls`, `jsonls`, `yamlls`, `sqls`, `bashls`, `dockerls`, `tailwindcss`, `emmet_ls` | prettier (html/css/json/yaml), sql_formatter (sql/mysql/plsql) | — |
 
 ### Python LSP notes (pyright)
 
@@ -51,6 +51,22 @@ A personal Neovim setup built on [lazy.nvim](https://github.com/folke/lazy.nvim)
 - Inlay hints enabled for variable types, return types, parameter types
 
 Pick the Python environment with `<leader>pv` (venv-selector).
+
+### SQL LSP notes (sqls)
+
+SQL files use `sqls` (MySQL, PostgreSQL, SQLite, MSSQL) instead of the old
+`sqlls`, which crashes on Node 22+.
+
+- Connections added through `:DBUIAddConnection` are imported automatically, so
+  `sqls` gets schema-aware completions from the same connections Dadbod uses.
+- The generated config lives at `~/.local/state/nvim/sqls/config.json` and is
+  only readable by your user. Restart the server with `:LspRestart sqls` after
+  adding/removing a connection.
+- To manage connections by hand instead, create `~/.config/sqls/config.yml`
+  (it takes precedence over the generated file). See
+  <https://github.com/sqls-server/sqls#db-configuration>.
+- Dadbod completion (`vim-dadbod-completion`) is wired into blink.cmp for
+  `sql`, `mysql`, and `plsql` buffers.
 
 ## Keybinds
 
@@ -177,7 +193,7 @@ Dashboard also has a "Restore Session" button (`s`).
 
 | Key | Action |
 |---|---|
-| `<leader>zo` / `<leader>za` / `<leader>zf` | Toggle DB UI / add connection / find buffer |
+| `<leader>zs` / `<leader>zo` / `<leader>za` / `<leader>zf` | Open DB UI / toggle DB UI / add connection / find buffer |
 | `<leader>mp` / `<leader>ms` | Markdown preview (browser) open / stop |
 | `<leader>cv` | Toggle CSV table view |
 | `<leader>po` | Open a PDF |

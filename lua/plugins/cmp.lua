@@ -49,7 +49,7 @@ return {
 					force_allow_filetypes = {
 						"c", "cpp", -- clangd
 						"rust", -- rust_analyzer (blocked by blink default)
-						"sql", -- sqlls (blocked by blink default)
+						"sql", "mysql", "plsql", -- sqls (blocked by blink default)
 						"go", -- gopls
 						"python", -- pyright
 						"lua", -- lua_ls
@@ -66,7 +66,19 @@ return {
 			},
 			sources = {
 				default = { "lsp", "path", "snippets", "buffer" },
+				per_filetype = {
+					-- sqls gives schema-aware LSP completions when a connection
+					-- exists; dadbod adds table/column completion from the
+					-- connection selected in vim-dadbod-ui.
+					sql = { "lsp", "dadbod", "snippets", "buffer" },
+					mysql = { "lsp", "dadbod", "snippets", "buffer" },
+					plsql = { "lsp", "dadbod", "snippets", "buffer" },
+				},
 				providers = {
+					dadbod = {
+						name = "Dadbod",
+						module = "vim_dadbod_completion.blink",
+					},
 					lsp = {
 						transform_items = (function()
 							local Kind = vim.lsp.protocol.CompletionItemKind

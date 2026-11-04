@@ -324,6 +324,12 @@ return {
 			vim.lsp.inlay_hint.enable(not enabled, { bufnr = bufnr })
 		end, { desc = "Toggle inlay hints" })
 
+		-- SQL: replace the broken sqlls (sql-language-server crashes on
+		-- modern Node) with sqls, which supports MySQL/PostgreSQL/SQLite.
+		-- Connections are imported from vim-dadbod-ui, so databases you add
+		-- through :DBUIAddConnection are schema-aware in sqls too.
+		require("core.sqls").setup()
+
 			require("mason-lspconfig").setup({
 				ensure_installed = {
 					"html", "cssls", "tailwindcss", "emmet_ls", "jsonls", "eslint",
@@ -332,14 +338,16 @@ return {
 					"lua_ls",
 					"rust_analyzer",
 					"clangd", "cmake",
-					"sqlls",
+					"sqls",
 					"bashls", "yamlls",
 					"dockerls", "docker_compose_language_service",
 					"marksman",
 				},
-				-- Exclude ts_ls: typescript-tools.nvim handles TS/JS instead
+				-- Exclude ts_ls: typescript-tools.nvim handles TS/JS instead.
+				-- sqlls is the old, broken SQL server; never auto-enable it
+				-- even if it is still installed from an earlier setup.
 				automatic_enable = {
-					exclude = { "ts_ls" },
+					exclude = { "ts_ls", "sqlls" },
 				},
 			})
 
@@ -400,6 +408,7 @@ return {
 				"prettier", -- conform: javascript/typescript/html/css/json/yaml/markdown
 				"stylua", -- conform: lua
 				"ruff", -- conform: python (ruff_format)
+				"sql-formatter", -- conform: sql
 				"clang-format", -- conform: c/cpp
 				"js-debug-adapter", -- dap: node/chrome/electron/react-native
 			},

@@ -18,6 +18,7 @@ return {
 				"json",
 				"yaml",
 				"bash",
+				"sql",
 				"markdown",
 				"markdown_inline",
 				"lua",

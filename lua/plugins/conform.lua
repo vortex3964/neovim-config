@@ -19,6 +19,9 @@ return {
 				cpp = { "clang_format" },
 				lua = { "stylua" },
 				python = { "ruff_format" },
+				sql = { "sql_formatter" },
+				mysql = { "sql_formatter" },
+				plsql = { "sql_formatter" },
 			},
 		})
 
