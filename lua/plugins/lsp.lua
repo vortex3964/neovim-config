@@ -17,6 +17,10 @@ return {
 			"neovim/nvim-lspconfig",
 		},
 		config = function()
+			-- Smart hover: understands function calls, so `K` works on `foo()`
+			-- and inside its argument list. Hover is on demand only.
+			local hover = require("core.hover")
+
 			-- NOTE: do NOT require("blink.cmp") here. That forces the
 			-- completion engine (+ LuaSnip + snippets) to load at startup
 			-- even though blink.cmp is lazy on InsertEnter. These are the
@@ -255,7 +259,7 @@ return {
 				map("gr", vim.lsp.buf.references, "Go to references")
 				map("gi", vim.lsp.buf.implementation, "Go to implementation")
 				map("K", function()
-					vim.lsp.buf.hover({ border = "rounded", max_width = 90, max_height = 30 })
+					hover.hover({ border = "rounded", max_width = 90, max_height = 30 })
 				end, "Hover docs")
 				map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
 				map("<leader>ca", vim.lsp.buf.code_action, "Code action")

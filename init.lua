@@ -3,6 +3,8 @@
 -- require the core setup for nvim
 require("core.keymaps")
 require("core.options")
+-- Blink.cmp window colors, also reused by the LSP hover float.
+require("core.cmp_hl")
 
 -- make mason-installed binaries (prettier, ruff, stylua, ...) findable
 vim.env.PATH = vim.fn.stdpath("data") .. "/mason/bin:" .. vim.env.PATH
